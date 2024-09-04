@@ -51,17 +51,41 @@ async def list_items(skip: int = 0, limit: int = 10):
 # Get a specific item by ID
 @app.get("/items/{item_id}")
 async def get_item(item_id: int, q: Optional[str] = None, short: bool = False):
-    item = {"item_id": item_id}
+    item = next((item for item_db if item["item_id"] == item_id), None)
+    if item is None:
+        raise HTTPException(status_code=404, detail="Item not found")
     if q:
         item.update({"q": q})
     if not short:
         item.update({"description": "This is CoutureLane"})
     return item
 
+
+#create new item
+@app.post("/items")
+async def create_item(item: Item):
+    new_id = max(item["item_id"] for item in item_db) + 1 if item_db else 1
+    new_item = item.dict()
+    new_item["item_id"] = new_id
+    item_db.append(new_item)
+    return {"item": new_item}
+
+
+#update a new item
+@app.put("/items/{item_id}")
+async def update_item(item_id: int, updated_item : Item)
+item = next((item for item in item_db if item["item_db"] == item_id), None)
+if item is None:
+    raise HTTPException(status_code=404, detail="Item not found")
+item.update(updated_item.dict())
+return {"item": item}
+
+
+
 # List all users
 @app.get("/users")
 async def list_users():
-    return {"message": "list users"}
+    return user_db
 
 # Get the current user
 @app.get("/users/me")
@@ -71,19 +95,18 @@ async def get_current_user():
 # Get a specific user by ID
 @app.get("/users/{user_id}")
 async def get_user(user_id: str):
-    return {"user_id": user_id}
+    user = next((user for user in user_db if user["item_id"] == user_id), None)
+    if user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    return user
 
-# Enum for food categories
-class FoodEnum(str, Enum):
-    fruits = "fruits"
-    vegetables = "vegetables"
-    dairy = "dairy"
-
-# Get a specific food category
-@app.get("/foods/{food_name}")
-async def get_food_name(food_name: FoodEnum):
-    if food_name == FoodEnum.vegetables:
-        return {"food_name": food_name, "message": "you're healthy"}
-    if food_name == FoodEnum.fruits:
-        return {"food_name": food_name, "message": "good to eat fruits"}
-    return {"food_name": food_name, "message": "I like dairy"}
+#search users by email
+@app.get("/users/search")
+async def search_users(email: Optional[str] = None)
+if email:
+    matched_users = [user for user in user_db if email in user["email"]]
+    if not matched_users:
+        raise HTTPException(status_code=404, detail="no user found  with this emaail")
+    return matched_users
+return {"message": "no emaily query provided"}
+    
