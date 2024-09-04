@@ -1,42 +1,59 @@
-from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
+from fastapi import FastAPI
+from enum import Enum
 from typing import Optional
+app = FastAPI() #instantiate app
 
-app = FastAPI()
-
-# Define a Pydantic model for request bodies
-class Item(BaseModel):
-    name: str
-    description: Optional[str] = None
-    price: float
-    tax: Optional[float] = None
-
-# Root endpoint
+#setup route
 @app.get("/")
-def read_root():
-    return {"message": "Welcome to the FastAPI application!"}
+async def root():
+    return {"message": "hello world"}
+@app.post("/")
+async def post():
+    return {"message": "hello from the post route"}
+@app.put("/")
+async def put():
+    return{"message":"hey from put route uWu"}
+# @app.get("/items")
+# async def list_items():
+#     return{"message":"list items"}
+# @app.get("/items/{item_id}")
+# async def get_item(item_id:int):
+#     return{"item_id":item_id}
+@app.get("/users")
+async def list_users():
+    return{"message":"list users"}
 
-# Endpoint to retrieve an item by ID
+@app.get("/users/me")
+async def get_current_user():
+    return{"message":"This is the current user"}
+@app.get("/users/{user_id}")
+async def get_item(user_id:str):
+    return{"user_id":user_id}
+
+class FoodEnum(str, Enum):
+    fruits= "fruits"
+    vegetables="vegetables"
+    dairy = "dairy"
+@app.get("/foods/{food_name}")
+async def get_food_name(food_name:FoodEnum):
+    if food_name == FoodEnum.vegetables:
+        return{"food_name":food_name, "message":"you're healthy"}
+    if food_name == FoodEnum.fruits:
+        return{"food_name":food_name, "message":"good to eat fruits"}
+    return{"food_name":food_name, "message":"I like dairy"}
+#query parameters
+
+fake_items_db = [{"item_name":"Shirt"},{"item_name":"Sweatpants"},{"item_name":"Shoes"}]
+@app.get("/items")
+async def list_items(skip: int= 0,limit:int = 10):
+    return fake_items_db[skip: skip+limit]
+#make parameters optional
 @app.get("/items/{item_id}")
-def read_item(item_id: int, q: Optional[str] = None):
-    return {"item_id": item_id, "q": q}
-
-# Endpoint to create a new item
-@app.post("/items/")
-def create_item(item: Item):
-    return {"item": item}
-
-# Endpoint to update an existing item
-@app.put("/items/{item_id}")
-def update_item(item_id: int, item: Item):
-    return {"item_id": item_id, "updated_item": item}
-
-# Endpoint to delete an item
-@app.delete("/items/{item_id}")
-def delete_item(item_id: int):
-    return {"message": f"Item with id {item_id} has been deleted"}
-
-# Endpoint to trigger an error
-@app.get("/error")
-def error_example():
-    raise HTTPException(status_code=404, detail="Item not found")
+async def get_item(item_id:str,q:Optional[str]= None, short: bool = False):
+    item = {"item_id":item_id}
+    if q:
+        # return {"item_id":item_id,"q":q}
+        return item.update({"q":q})
+    if not short:
+        item.update({"description":"This is the description"})
+    return {"item_id":item_id}
