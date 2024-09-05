@@ -2,11 +2,20 @@ from fastapi import FastAPI, HTTPException
 from enum import Enum
 from typing import Optional
 from pydantic import BaseModel
+from starlette.middleware.cors import CORSMiddleware
 
 app = FastAPI()  # Instantiate the FastAPI application
 
-#fake database
+# Add CORS middleware this list all the origins,methods,headers,use "*" for all methods
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  
+    allow_credentials=True,
+    allow_methods=["*"],   
+    allow_headers=["*"],  
+)
 
+#fake database
 item_db = [
     {"item_id": 1001, "item_name": "Shirt", "price": 600, "stock": 2000},
     {"item_id": 1002, "item_name": "Jeans", "price": 1200, "stock": 500},
