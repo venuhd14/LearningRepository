@@ -51,7 +51,7 @@ async def list_items(skip: int = 0, limit: int = 10):
 # Get a specific item by ID
 @app.get("/items/{item_id}")
 async def get_item(item_id: int, q: Optional[str] = None, short: bool = False):
-    item = next((item for item_db if item["item_id"] == item_id), None)
+    item = next((item for item in item_db if item["item_id"] == item_id), None)
     if item is None:
         raise HTTPException(status_code=404, detail="Item not found")
     if q:
@@ -73,14 +73,12 @@ async def create_item(item: Item):
 
 #update a new item
 @app.put("/items/{item_id}")
-async def update_item(item_id: int, updated_item : Item)
-item = next((item for item in item_db if item["item_db"] == item_id), None)
-if item is None:
-    raise HTTPException(status_code=404, detail="Item not found")
-item.update(updated_item.dict())
-return {"item": item}
-
-
+async def update_item(item_id: int, updated_item : Item):
+    item = next((item for item in item_db if item["item_id"] == item_id), None)
+    if item is None:
+        raise HTTPException(status_code=404, detail="Item not found")
+    item.update(updated_item.dict())
+    return {"item": item}
 
 # List all users
 @app.get("/users")
@@ -102,11 +100,11 @@ async def get_user(user_id: str):
 
 #search users by email
 @app.get("/users/search")
-async def search_users(email: Optional[str] = None)
-if email:
-    matched_users = [user for user in user_db if email in user["email"]]
-    if not matched_users:
-        raise HTTPException(status_code=404, detail="no user found  with this emaail")
-    return matched_users
-return {"message": "no emaily query provided"}
+async def search_users(email: Optional[str] = None):
+    if email:
+        matched_users = [user for user in user_db if email in user["email"]]
+        if not matched_users:
+            raise HTTPException(status_code=404, detail="no user found  with this emaail")
+        return matched_users
+    return {"message": "no email query provided"}
     
