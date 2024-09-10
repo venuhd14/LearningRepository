@@ -1,10 +1,12 @@
 from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.responses import JSONResponse
 import pandas as pd
+import csv
 from io import StringIO
 
 app = FastAPI()
 
+#upload csv file
 @app.post("/upload/")
 async def upload_csv(file: UploadFile = File(...)):
     if not file.filename.endswith('.csv'):
@@ -19,6 +21,15 @@ async def upload_csv(file: UploadFile = File(...)):
     except pd.errors.ParserError:
         raise HTTPException(status_code=400, detail="Error parsing CSV file.")
     
+    #check for correct number of columns
+    expected_columns = ['Code', 'Symbol','Name']
+        # expected_columns = ['Name', 'age','email']output will be false
+    if list(df.columns) != expected_columns:
+        print("Header row does not match expected columns.")
+        return False
+    
+
+    
 #   convert into json format
     try:
         json_data = df.to_dict(orient='records')
@@ -28,3 +39,11 @@ async def upload_csv(file: UploadFile = File(...)):
 
     # # If all validations pass
     # return {"detail": "CSV file is valid."}
+    
+    #check for correct number of columns
+    expected_columns = ['Name', 'Age','Email']
+    if list(df.columns) != expected_columns:
+        print("Header row does not match expected columns.")
+        return False
+    #check for data types
+    
