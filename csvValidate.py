@@ -6,14 +6,18 @@ from io import StringIO
 
 app = FastAPI()
 
+MAX_FILE_SIZE = 1 * 1024 * 1024  # 1MB 
+
 #upload csv file
 @app.post("/upload/")
 async def upload_csv(file: UploadFile = File(...)):
     if not file.filename.endswith('.csv'):
         raise HTTPException(status_code=400, detail="Only CSV files are accepted.")
     
-    # Read the files
+    # Read the file
     contents = await file.read()
+    if len(contents) > MAX_FILE_SIZE:
+        raise HTTPException(status_code=400, detail="File is too large. Maximum size is 1MB.")
     try:
         df = pd.read_csv(StringIO(contents.decode('utf-8')))
     except pd.errors.EmptyDataError:

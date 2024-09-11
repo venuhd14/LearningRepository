@@ -3,7 +3,7 @@ from typing import List
 app = FastAPI()
 
 # Constants for file validation
-MAX_FILE_SIZE = 10 * 1024 * 1024  # 10 MB
+MAX_FILE_SIZE = 0.5 * 1024 * 1024  # 500 kB #100kb
 ALLOWED_CONTENT_TYPES = {"text/csv", "application/json"}
 
 # Single file upload
@@ -15,7 +15,7 @@ async def upload_single_file(uploaded_file: UploadFile = File(...)):
     contents = await uploaded_file.read()
     
     if len(contents) > MAX_FILE_SIZE:
-        raise HTTPException(status_code=400, detail="File is too large. Maximum size is 10 MB.")
+        raise HTTPException(status_code=400, detail="File is too large. Maximum size is 100 kB.")
     
     return {
         "filename": uploaded_file.filename,
