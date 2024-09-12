@@ -12,7 +12,6 @@ MAX_FILE_SIZE = 1 * 1024 * 1024  # 1MB
 
 UPLOAD_DIR = 'files'
 os.makedirs(UPLOAD_DIR, exist_ok=True)
-
 file_hashes = {}
 
 def compute_file_hash(file):
