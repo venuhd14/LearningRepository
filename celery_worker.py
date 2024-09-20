@@ -1,5 +1,6 @@
 import os
 import time
+import json
 
 from celery import Celery
 
@@ -13,4 +14,10 @@ def create_task(task_type: int):
     print(f"task started with sleep time-- {task_type}")
     time.sleep(task_type)
     print(f"task finished after-- {task_type}")
-    return True
+    result = {
+        "success": True,
+        "message": f"Task completed after {task_type} seconds",
+        "task_type": task_type
+    }
+    
+    return json.dumps(result)  # Return JSON formatted string
