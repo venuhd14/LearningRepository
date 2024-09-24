@@ -1,0 +1,208 @@
+
+
+         JSON
+         
+* javaScript object notation 
+*File Formats
+* consist Key-value pair
+* keys must be string value can be string,boolean, numbers,object, arrays,null
+* key value pair is separated by comma
+
+SYNTAX
+{"name":"rahul",
+"city": "mysuru"
+}
+Serialization and deserialization 
+json.dumps(object) : Serialization
+json.loads(json_strings) : deserialization 
+
+
+where dump() is used for write
+load() is used for read  
+dumps() is used for to convert python object into json strings
+loads is used for to convert json strings into python object
+   
+
+
+         RestAPI
+         
+Representational state Transfer 
+HTTP methods
+GET : Read a resource 
+POST : Create a resource 
+PUT : Update
+DELETE : Delete
+
+these HTTP Method perform the CRUD operation (create, read, update, delete)
+
+
+
+        FastAPI:  framework for building api
+
+setup: pip install fastapi uvicorn
+
+get retrive all the items 
+@app.get("/item")
+def get_items():
+ retuen items
+ 
+create an item
+@app.post("/items/")
+def create_item(item: Item):
+items.append(item)
+return item)
+
+update an item
+@app.put("/items/{item_id}")
+def update_item()
+
+delete an item
+@app.delete("/items/{item_id"}
+def delete_item()
+
+To run the fast api
+uvicorn main:app --reload (here main is folder name)
+
+fast api support bot path and query parameters
+
+
+
+      
+      Git
+      
+sudo apt-get install git 
+
+congiguring 
+git config --global user.name "Your Name"
+git config --global user.email "you@example.com"
+
+add changes 
+git add .
+commiting
+git commit -m "Initial commit"
+
+branching and merging 
+git branch my_feature
+
+
+      File type validation and size
+
+File extension validation: checking extension against a list of allowed extension 
+allowed_extensions = ['.jpg', '.png']
+
+MIME Type validation : allowed_mime_types = ['image/jpeg', 'image/png', 'application/json']
+
+File signature validation : expected_jpg_signature = b'\xff\xd8\xff\xe0'  
+different file signatures pdf : %pdf,
+jpeg : FFD8FF , png : 89504E47, zip : pk00, mp3 : FFFB or FFFA
+
+
+
+  CORS (cross origin resource sharing) 
+  
+ commands:  install cors
+ 
+ importing cors 
+ from fastapi.middleware.cors import CORSMiddleware
+  
+  
+  # Add CORS middleware this list all the origins,methods,headers,use "*" for all methods
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  
+    allow_credentials=True,
+    allow_methods=["*"],    
+    allow_headers=["*"],  
+)
+#allowing specific origin
+app.add_middleware(
+    CORSMiidlewrae,
+    allow_origins=["https://example.com"],
+    allow_credentials=True,
+    allow_methods=["GET, POST"],
+    allow_headers=["Content_type, Authorizationn"],    
+)
+
+#allowing multiple origins
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["https://example.com", "https://newdomain.com"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+     celery worker
+
+
+
+worker.py
+
+import os 
+import time
+from celery import Celery 
+
+
+celery = Celery('tasks',broker='redis://localhost:6379/0',backend='redis://localhost:6379/0')
+
+@celery.task(name="create_task")
+def create_task(task_type: int):
+    print(f"task started with sleep time-- {task_type}")
+    time.sleep(task_type)
+    print(f"task finished after-- {task_type}")
+    return True
+
+
+in main.py
+
+#import modules
+from fastapi import FastAPI, File, UploadFile, HTTPException, Body
+from typing import List
+from worker import create_task
+import asyncio
+
+app = FastAPI() #create a instance of fastapi
+
+
+#create a endpoint
+@app.post("/task")
+
+
+commands
+
+
+
+
+Celery: 
+*aynchronous task queues or job queue
+CELERY  COMMAND = "celery -A worker.celery worker --loglevel=info"
+
+
+
+  CELERY FLOWER:
+*it helps in monitoring and managing celery clusters 
+*it provides information about status of celery workers and task 
+ COMMAND = "celery -A worker.celery flower --broker=redis://localhost:6379/0 --port=5555"
+ 
+ AUTHENTICATION = "celery -A worker.celery flower --broker=redis://localhost:6379/0 --basic_auth=user:blubirch --port=5555"
+"WHERE username=user and password=blubirch"
+
+  REDIS:
+* In-memory storage used as distributed in memory key value database cache and messege broker
+
+
